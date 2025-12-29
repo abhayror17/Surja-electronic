@@ -30,7 +30,9 @@ export type ViewState =
   | { type: 'HOME' }
   | { type: 'CATALOG'; category?: Category }
   | { type: 'PRODUCT_DETAIL'; productId: string }
-  | { type: 'DEMOS' };
+  | { type: 'DEMOS' }
+  | { type: 'ADMIN_LOGIN' }
+  | { type: 'ADMIN_DASHBOARD' };
 
 export interface ChatMessage {
   role: 'user' | 'model';

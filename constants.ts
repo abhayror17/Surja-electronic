@@ -1,6 +1,6 @@
 import { Category, Product, DemoProject } from './types';
 
-export const PRODUCTS: Product[] = [
+export const INITIAL_PRODUCTS: Product[] = [
   {
     id: 'p1',
     name: 'ProFlex Braided USB-C Cable',
