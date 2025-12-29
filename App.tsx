@@ -38,14 +38,14 @@ const Navbar = ({ isAdmin }: { isAdmin: boolean }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { currentView, navigate } = useNavigation();
 
-  const navItems = [
-    { label: 'Home', view: { type: 'HOME' } as const },
-    { label: 'Products', view: { type: 'CATALOG' } as const },
-    { label: 'Manufacturing & QA', view: { type: 'DEMOS' } as const },
+  const navItems: { label: string; view: ViewState }[] = [
+    { label: 'Home', view: { type: 'HOME' } },
+    { label: 'Products', view: { type: 'CATALOG' } },
+    { label: 'Manufacturing & QA', view: { type: 'DEMOS' } },
   ];
 
   if (isAdmin) {
-    navItems.push({ label: 'Admin Dashboard', view: { type: 'ADMIN_DASHBOARD' } as const });
+    navItems.push({ label: 'Admin Dashboard', view: { type: 'ADMIN_DASHBOARD' } });
   }
 
   const isActive = (view: ViewState) => {
@@ -394,6 +394,14 @@ const ProductDetailView = ({ products }: { products: Product[] }) => {
   const productId = currentView.type === 'PRODUCT_DETAIL' ? currentView.productId : null;
   const product = products.find(p => p.id === productId);
 
+  const [activeImage, setActiveImage] = useState('');
+
+  useEffect(() => {
+    if (product) {
+      setActiveImage(product.imageUrl);
+    }
+  }, [product]);
+
   if (!product) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50">
@@ -408,6 +416,13 @@ const ProductDetailView = ({ products }: { products: Product[] }) => {
     );
   }
 
+  // Define some diverse mock images to simulate a gallery
+  const galleryImages = [
+    product.imageUrl,
+    'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800&auto=format&fit=crop'
+  ];
+
   return (
     <div className="min-h-screen bg-white">
       {/* Detail Header */}
@@ -419,19 +434,30 @@ const ProductDetailView = ({ products }: { products: Product[] }) => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           {/* Left: Gallery */}
           <div className="space-y-4">
-            <div className="aspect-[4/3] rounded-3xl overflow-hidden bg-slate-100 border border-slate-200">
-              <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
+            <div className="aspect-[4/3] rounded-3xl overflow-hidden bg-slate-100 border border-slate-200 shadow-sm relative">
+              <img 
+                src={activeImage || product.imageUrl} 
+                alt={product.name} 
+                className="w-full h-full object-cover transition-opacity duration-300" 
+              />
             </div>
             <div className="grid grid-cols-3 gap-4">
-               {/* Use the main image as the first thumbnail, and placeholder variants for others */}
-               {[0, 1, 2].map(i => (
-                 <div key={i} className="aspect-square rounded-xl bg-slate-100 overflow-hidden border border-slate-200 opacity-60 hover:opacity-100 cursor-pointer transition-opacity">
+               {galleryImages.map((img, idx) => (
+                 <button 
+                   key={idx} 
+                   onClick={() => setActiveImage(img)}
+                   className={`aspect-square rounded-xl bg-slate-100 overflow-hidden border-2 transition-all duration-200 ${
+                     activeImage === img 
+                       ? 'border-indigo-600 ring-2 ring-indigo-100 opacity-100' 
+                       : 'border-slate-200 opacity-60 hover:opacity-100 hover:border-indigo-300'
+                   }`}
+                 >
                    <img 
-                      src={i === 0 ? product.imageUrl : `https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=300&auto=format&fit=crop`} 
+                      src={img} 
                       className="w-full h-full object-cover" 
-                      alt={`View ${i + 1}`} 
+                      alt={`View ${idx + 1}`} 
                     />
-                 </div>
+                 </button>
                ))}
             </div>
           </div>
