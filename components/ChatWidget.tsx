@@ -10,7 +10,7 @@ interface ChatWidgetProps {
 const ChatWidget: React.FC<ChatWidgetProps> = ({ product }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'model', text: `Hello! I'm the Surya Electra technical assistant for the ${product.name}. How can I help with specs or customization?` }
+    { role: 'model', text: `Hello! I'm the Suraj Electra technical assistant for the ${product.name}. How can I help with ODM/OEM specs or customization?` }
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -79,7 +79,7 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({ product }) => {
             <div className="flex items-center gap-2">
               <Bot className="w-6 h-6" />
               <div>
-                <h3 className="font-semibold text-sm">Surya Assistant</h3>
+                <h3 className="font-semibold text-sm">Suraj Assistant</h3>
                 <p className="text-xs text-indigo-100 opacity-80">Powered by Gemini</p>
               </div>
             </div>

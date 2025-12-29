@@ -19,7 +19,7 @@ export const askProductExpert = async (
   if (!ai) return "I'm sorry, I can't connect to the server right now (Missing API Key).";
 
   const systemInstruction = `
-    You are an expert technical sales engineer for "Surya Electra", a premier ODM (Original Design Manufacturer).
+    You are an expert technical sales engineer for "Suraj Electra", a premier ODM + OEM (Original Design & Equipment Manufacturer).
     You are currently assisting a B2B client or partner with the product: "${product.name}".
     
     Here are the product details:
@@ -32,7 +32,7 @@ export const askProductExpert = async (
 
     Your Goal:
     1. Answer technical questions accurately using the provided specs.
-    2. Emphasize manufacturing capabilities, quality assurance, and customization options (OEM/ODM).
+    2. Emphasize manufacturing capabilities, quality assurance, and customization options (ODM + OEM).
     3. Be professional, concise, and helpful.
     4. If asked about bulk orders or custom branding, encourage them to contact the sales team.
     5. Do not invent technical facts not present in the data.

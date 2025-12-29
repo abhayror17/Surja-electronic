@@ -60,7 +60,7 @@ const Navbar = ({ isAdmin }: { isAdmin: boolean }) => {
             <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center mr-2">
               <Cpu className="w-5 h-5 text-white fill-current" />
             </div>
-            <span className="font-bold text-xl text-slate-900 tracking-tight">Surya Electra</span>
+            <span className="font-bold text-xl text-slate-900 tracking-tight">Suraj Electra</span>
           </button>
 
           {/* Desktop Nav */}
@@ -185,9 +185,9 @@ const HomeView = ({ products }: { products: Product[] }) => {
       <section className="relative bg-slate-900 text-white py-24 px-4 overflow-hidden">
         <div className="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?q=80&w=2069&auto=format&fit=crop')] bg-cover bg-center" />
         <div className="max-w-7xl mx-auto relative z-10 flex flex-col items-center text-center">
-          <span className="text-indigo-400 font-semibold tracking-wider uppercase mb-4">Leading ODM Manufacturer</span>
+          <span className="text-indigo-400 font-semibold tracking-wider uppercase mb-4">Leading ODM + OEM Manufacturer</span>
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight">
-            Surya Electra<br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">Precision in Every Circuit</span>
+            Suraj Electra<br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">Precision in Every Circuit</span>
           </h1>
           <p className="max-w-2xl text-slate-300 text-lg md:text-xl mb-10 leading-relaxed">
             Your partner for high-quality electronics manufacturing. From braided cables and smart remotes to custom PCB assembly, we bring your concepts to mass production.
@@ -213,7 +213,7 @@ const HomeView = ({ products }: { products: Product[] }) => {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-end mb-10">
           <div>
-            <h2 className="text-3xl font-bold text-slate-900">ODM Solutions</h2>
+            <h2 className="text-3xl font-bold text-slate-900">ODM + OEM Solutions</h2>
             <p className="text-slate-500 mt-2">White-label products ready for your brand.</p>
           </div>
           <button 
@@ -578,7 +578,7 @@ const AdminLoginView = ({ onLoginSuccess }: { onLoginSuccess: () => void }) => {
           </div>
         </div>
         <h2 className="text-2xl font-bold text-center text-slate-900 mb-2">Admin Access</h2>
-        <p className="text-center text-slate-500 mb-8">Login to manage Surya Electra catalogue</p>
+        <p className="text-center text-slate-500 mb-8">Login to manage Suraj Electra catalogue</p>
         
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
@@ -825,10 +825,10 @@ const Footer = () => {
         <div>
           <div className="flex items-center text-white mb-4">
              <Cpu className="w-5 h-5 fill-current mr-2" />
-             <span className="font-bold text-xl">Surya Electra</span>
+             <span className="font-bold text-xl">Suraj Electra</span>
           </div>
           <p className="text-sm text-slate-400">
-            Premier Electronics ODM Manufacturer. Innovation, Quality, and Scale.
+            Premier Electronics ODM + OEM Manufacturer. Innovation, Quality, and Scale.
           </p>
         </div>
         <div>
@@ -843,7 +843,7 @@ const Footer = () => {
         <div>
           <h4 className="text-white font-semibold mb-4">Company</h4>
           <ul className="space-y-2 text-sm">
-            <li>About Surya</li>
+            <li>About Suraj</li>
             <li>Quality Control</li>
             <li>Certifications</li>
             <li>Contact OEM Sales</li>
@@ -869,7 +869,7 @@ const Footer = () => {
 export default function App() {
   const [products, setProducts] = useState<Product[]>(() => {
     try {
-      const savedProducts = localStorage.getItem('surya_products');
+      const savedProducts = localStorage.getItem('suraj_products');
       return savedProducts ? JSON.parse(savedProducts) : INITIAL_PRODUCTS;
     } catch (e) {
       console.error("Failed to load products from local storage", e);
@@ -879,7 +879,7 @@ export default function App() {
 
   useEffect(() => {
     try {
-      localStorage.setItem('surya_products', JSON.stringify(products));
+      localStorage.setItem('suraj_products', JSON.stringify(products));
     } catch (e) {
       console.error("Failed to save products to local storage", e);
     }
