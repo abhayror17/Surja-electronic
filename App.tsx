@@ -423,6 +423,10 @@ const ProductDetailView = ({ products }: { products: Product[] }) => {
     'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800&auto=format&fit=crop'
   ];
 
+  const relatedProducts = products
+    .filter(p => p.category === product.category && p.id !== product.id)
+    .slice(0, 3);
+
   return (
     <div className="min-h-screen bg-white">
       {/* Detail Header */}
@@ -528,6 +532,18 @@ const ProductDetailView = ({ products }: { products: Product[] }) => {
           </div>
         </div>
       </div>
+
+      {/* Related Products */}
+      {relatedProducts.length > 0 && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 border-t border-slate-100">
+          <h2 className="text-2xl font-bold text-slate-900 mb-8">Related Products</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {relatedProducts.map(related => (
+              <ProductCard key={related.id} product={related} />
+            ))}
+          </div>
+        </div>
+      )}
       
       {/* AI Widget */}
       <ChatWidget product={product} />
