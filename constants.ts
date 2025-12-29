@@ -59,7 +59,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     imageUrl: 'https://images.unsplash.com/photo-1605396559384-5f53c1555238?q=80&w=2070&auto=format&fit=crop',
     features: ['Dual-Band Wi-Fi', 'Matter Support', 'Low Power Consumption', 'OTA Update Ready'],
     specs: {
-      'Chipset': 'Surja S-Series SoC',
+      'Chipset': 'Surya S-Series SoC',
       'Connectivity': 'Wi-Fi 6, BLE 5.3',
       'IO Ports': 'GPIO, I2C, UART',
       'Size': '22mm x 18mm'

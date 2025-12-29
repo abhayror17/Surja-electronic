@@ -19,7 +19,7 @@ export const askProductExpert = async (
   if (!ai) return "I'm sorry, I can't connect to the server right now (Missing API Key).";
 
   const systemInstruction = `
-    You are an expert technical sales engineer for "Surja Electronics", a premier ODM (Original Design Manufacturer).
+    You are an expert technical sales engineer for "Surya Electra", a premier ODM (Original Design Manufacturer).
     You are currently assisting a B2B client or partner with the product: "${product.name}".
     
     Here are the product details:
