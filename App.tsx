@@ -1,21 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation, useParams, Navigate } from 'react-router-dom';
+import React, { useState, useEffect, useContext, createContext } from 'react';
 import { 
   Menu, X, ShoppingBag, Layers, ArrowRight, Star, 
   ChevronRight, ExternalLink, Filter, Search, Grid, List, Zap, Cpu, Cable,
   Lock, Plus, Trash, CheckCircle
 } from 'lucide-react';
-import { Category, Product, DemoProject } from './types';
+import { Category, Product, DemoProject, ViewState } from './types';
 import { INITIAL_PRODUCTS, DEMOS } from './constants';
 import ChatWidget from './components/ChatWidget';
+
+// --- Navigation Context ---
+
+type NavigationContextType = {
+  currentView: ViewState;
+  navigate: (view: ViewState) => void;
+};
+
+const NavigationContext = createContext<NavigationContextType>({
+  currentView: { type: 'HOME' },
+  navigate: () => {},
+});
+
+const useNavigation = () => useContext(NavigationContext);
 
 // --- Helper Components ---
 
 const ScrollToTop = () => {
-  const { pathname } = useLocation();
+  const { currentView } = useNavigation();
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [pathname]);
+  }, [currentView]);
   return null;
 };
 
@@ -23,48 +36,47 @@ const ScrollToTop = () => {
 
 const Navbar = ({ isAdmin }: { isAdmin: boolean }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const location = useLocation();
+  const { currentView, navigate } = useNavigation();
 
   const navItems = [
-    { label: 'Home', path: '/' },
-    { label: 'Products', path: '/products' },
-    { label: 'Manufacturing & QA', path: '/demos' },
+    { label: 'Home', view: { type: 'HOME' } as const },
+    { label: 'Products', view: { type: 'CATALOG' } as const },
+    { label: 'Manufacturing & QA', view: { type: 'DEMOS' } as const },
   ];
 
   if (isAdmin) {
-    navItems.push({ label: 'Admin Dashboard', path: '/admin/dashboard' });
+    navItems.push({ label: 'Admin Dashboard', view: { type: 'ADMIN_DASHBOARD' } as const });
   }
 
-  const isActive = (path: string) => {
-    if (path === '/' && location.pathname !== '/') return false;
-    return location.pathname.startsWith(path);
+  const isActive = (view: ViewState) => {
+    return currentView.type === view.type;
   };
 
   return (
     <nav className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
-          <Link to="/" className="flex items-center cursor-pointer">
+          <button onClick={() => navigate({ type: 'HOME' })} className="flex items-center cursor-pointer">
             <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center mr-2">
               <Cpu className="w-5 h-5 text-white fill-current" />
             </div>
             <span className="font-bold text-xl text-slate-900 tracking-tight">Surja Electronics</span>
-          </Link>
+          </button>
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
+              <button
+                key={item.label}
+                onClick={() => navigate(item.view)}
                 className={`text-sm font-medium transition-colors ${
-                  isActive(item.path) 
+                  isActive(item.view) 
                     ? 'text-indigo-600' 
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 {item.label}
-              </Link>
+              </button>
             ))}
             <button className="bg-slate-900 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-slate-800 transition-colors">
               Contact OEM Sales
@@ -85,18 +97,20 @@ const Navbar = ({ isAdmin }: { isAdmin: boolean }) => {
         <div className="md:hidden bg-white border-b border-slate-200">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             {navItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                onClick={() => setMobileMenuOpen(false)}
+              <button
+                key={item.label}
+                onClick={() => {
+                  navigate(item.view);
+                  setMobileMenuOpen(false);
+                }}
                 className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium ${
-                   isActive(item.path) 
+                   isActive(item.view) 
                     ? 'bg-indigo-50 text-indigo-600' 
                     : 'text-slate-600 hover:bg-slate-50'
                 }`}
               >
                 {item.label}
-              </Link>
+              </button>
             ))}
           </div>
         </div>
@@ -106,10 +120,10 @@ const Navbar = ({ isAdmin }: { isAdmin: boolean }) => {
 };
 
 const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
-  const navigate = useNavigate();
+  const { navigate } = useNavigation();
   return (
     <div 
-      onClick={() => navigate(`/product/${product.id}`)}
+      onClick={() => navigate({ type: 'PRODUCT_DETAIL', productId: product.id })}
       className="group bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col h-full"
     >
       <div className="aspect-[4/3] overflow-hidden bg-slate-100 relative">
@@ -139,9 +153,9 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
 };
 
 const DemoCard: React.FC<{ demo: DemoProject }> = ({ demo }) => {
-  const navigate = useNavigate();
+  const { navigate } = useNavigation();
   return (
-    <div onClick={() => navigate('/demos')} className="group cursor-pointer">
+    <div onClick={() => navigate({ type: 'DEMOS' })} className="group cursor-pointer">
       <div className="relative rounded-2xl overflow-hidden mb-4 aspect-video">
         <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors z-10" />
         <img 
@@ -164,6 +178,7 @@ const DemoCard: React.FC<{ demo: DemoProject }> = ({ demo }) => {
 // --- Views ---
 
 const HomeView = ({ products }: { products: Product[] }) => {
+  const { navigate } = useNavigation();
   return (
     <div className="space-y-20 pb-20">
       {/* Hero */}
@@ -178,18 +193,18 @@ const HomeView = ({ products }: { products: Product[] }) => {
             Your partner for high-quality electronics manufacturing. From braided cables and smart remotes to custom PCB assembly, we bring your concepts to mass production.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
-            <Link 
-              to="/products"
+            <button 
+              onClick={() => navigate({ type: 'CATALOG' })}
               className="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full font-semibold transition-all transform hover:scale-105 shadow-lg shadow-indigo-500/30 flex items-center justify-center"
             >
               Browse Catalogue
-            </Link>
-            <Link 
-              to="/demos"
+            </button>
+            <button 
+              onClick={() => navigate({ type: 'DEMOS' })}
               className="px-8 py-4 bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm rounded-full font-semibold transition-all flex items-center justify-center"
             >
               Factory Tours
-            </Link>
+            </button>
           </div>
         </div>
       </section>
@@ -201,12 +216,12 @@ const HomeView = ({ products }: { products: Product[] }) => {
             <h2 className="text-3xl font-bold text-slate-900">ODM Solutions</h2>
             <p className="text-slate-500 mt-2">White-label products ready for your brand.</p>
           </div>
-          <Link 
-            to="/products"
+          <button 
+            onClick={() => navigate({ type: 'CATALOG' })}
             className="text-indigo-600 font-medium hover:text-indigo-700 flex items-center"
           >
             View all products <ArrowRight className="w-4 h-4 ml-1" />
-          </Link>
+          </button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {products.slice(0, 3).map(product => (
@@ -223,12 +238,12 @@ const HomeView = ({ products }: { products: Product[] }) => {
               <h2 className="text-3xl font-bold text-slate-900">Manufacturing Excellence</h2>
               <p className="text-slate-500 mt-2">See our production lines and quality assurance in action.</p>
             </div>
-            <Link 
-              to="/demos"
+            <button 
+              onClick={() => navigate({ type: 'DEMOS' })}
               className="text-indigo-600 font-medium hover:text-indigo-700 flex items-center"
             >
               View all demos <ArrowRight className="w-4 h-4 ml-1" />
-            </Link>
+            </button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {DEMOS.slice(0, 3).map(demo => (
@@ -314,7 +329,7 @@ const CatalogView = ({ products }: { products: Product[] }) => {
 };
 
 const DemosView = ({ products }: { products: Product[] }) => {
-  const navigate = useNavigate();
+  const { navigate } = useNavigation();
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 min-h-screen">
       <div className="mb-12 text-center max-w-2xl mx-auto">
@@ -353,7 +368,7 @@ const DemosView = ({ products }: { products: Product[] }) => {
                     {relatedProducts.map(p => (
                       <div 
                         key={p.id} 
-                        onClick={() => navigate(`/product/${p.id}`)}
+                        onClick={() => navigate({ type: 'PRODUCT_DETAIL', productId: p.id })}
                         className="flex items-center gap-3 bg-slate-50 hover:bg-slate-100 p-2 pr-4 rounded-xl border border-slate-200 cursor-pointer transition-colors"
                       >
                         <img src={p.imageUrl} alt={p.name} className="w-10 h-10 rounded-lg object-cover" />
@@ -375,8 +390,8 @@ const DemosView = ({ products }: { products: Product[] }) => {
 };
 
 const ProductDetailView = ({ products }: { products: Product[] }) => {
-  const { productId } = useParams();
-  const navigate = useNavigate();
+  const { currentView, navigate } = useNavigation();
+  const productId = currentView.type === 'PRODUCT_DETAIL' ? currentView.productId : null;
   const product = products.find(p => p.id === productId);
 
   if (!product) {
@@ -384,7 +399,7 @@ const ProductDetailView = ({ products }: { products: Product[] }) => {
       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50">
         <h2 className="text-2xl font-bold text-slate-900 mb-4">Product not found</h2>
         <button 
-          onClick={() => navigate('/products')}
+          onClick={() => navigate({ type: 'CATALOG' })}
           className="text-indigo-600 font-medium flex items-center hover:underline"
         >
           <ArrowRight className="w-4 h-4 mr-2 rotate-180" /> Back to Catalogue
@@ -397,7 +412,7 @@ const ProductDetailView = ({ products }: { products: Product[] }) => {
     <div className="min-h-screen bg-white">
       {/* Detail Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <button onClick={() => navigate('/products')} className="flex items-center text-slate-500 hover:text-indigo-600 transition-colors mb-6">
+        <button onClick={() => navigate({ type: 'CATALOG' })} className="flex items-center text-slate-500 hover:text-indigo-600 transition-colors mb-6">
           <ArrowRight className="w-4 h-4 mr-2 rotate-180" /> Back to Catalogue
         </button>
 
@@ -500,13 +515,13 @@ const AdminLoginView = ({ onLoginSuccess }: { onLoginSuccess: () => void }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate();
+  const { navigate } = useNavigation();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (username === 'admin' && password === 'admin') {
       onLoginSuccess();
-      navigate('/admin/dashboard');
+      navigate({ type: 'ADMIN_DASHBOARD' });
     } else {
       setError('Invalid credentials');
     }
@@ -553,7 +568,7 @@ const AdminLoginView = ({ onLoginSuccess }: { onLoginSuccess: () => void }) => {
           </button>
           <button 
             type="button" 
-            onClick={() => navigate('/')}
+            onClick={() => navigate({ type: 'HOME' })}
             className="w-full bg-white text-slate-600 py-3 rounded-lg font-semibold hover:bg-slate-50 border border-slate-200 transition-colors"
           >
             Cancel
@@ -580,9 +595,17 @@ const AdminDashboardView = ({ onAddProduct, isAdmin }: { onAddProduct: (p: Produ
   const [specKey, setSpecKey] = useState('');
   const [specValue, setSpecValue] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+  
+  const { navigate } = useNavigation();
+
+  useEffect(() => {
+    if (!isAdmin) {
+      navigate({ type: 'ADMIN_LOGIN' });
+    }
+  }, [isAdmin, navigate]);
 
   if (!isAdmin) {
-    return <Navigate to="/admin/login" replace />;
+    return null; 
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -752,80 +775,104 @@ const AdminDashboardView = ({ onAddProduct, isAdmin }: { onAddProduct: (p: Produ
   );
 };
 
-const Footer = () => (
-  <footer className="bg-slate-900 text-slate-300 py-12 mt-auto">
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
-      <div>
-        <div className="flex items-center text-white mb-4">
-           <Cpu className="w-5 h-5 fill-current mr-2" />
-           <span className="font-bold text-xl">Surja Electronics</span>
+const Footer = () => {
+  const { navigate } = useNavigation();
+  return (
+    <footer className="bg-slate-900 text-slate-300 py-12 mt-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div>
+          <div className="flex items-center text-white mb-4">
+             <Cpu className="w-5 h-5 fill-current mr-2" />
+             <span className="font-bold text-xl">Surja Electronics</span>
+          </div>
+          <p className="text-sm text-slate-400">
+            Premier Electronics ODM Manufacturer. Innovation, Quality, and Scale.
+          </p>
         </div>
-        <p className="text-sm text-slate-400">
-          Premier Electronics ODM Manufacturer. Innovation, Quality, and Scale.
-        </p>
-      </div>
-      <div>
-        <h4 className="text-white font-semibold mb-4">Solutions</h4>
-        <ul className="space-y-2 text-sm">
-          <li>Custom Cables</li>
-          <li>PCB Assembly</li>
-          <li>Box Build</li>
-          <li>IoT Integration</li>
-        </ul>
-      </div>
-      <div>
-        <h4 className="text-white font-semibold mb-4">Company</h4>
-        <ul className="space-y-2 text-sm">
-          <li>About Surja</li>
-          <li>Quality Control</li>
-          <li>Certifications</li>
-          <li>Contact OEM Sales</li>
-        </ul>
-      </div>
-      <div>
-        <h4 className="text-white font-semibold mb-4">Internal</h4>
-        <div className="flex flex-col gap-2 items-start">
-          <p className="text-xs text-slate-500">Employee access only.</p>
-          <Link 
-            to="/admin/login"
-            className="text-slate-400 hover:text-white text-sm flex items-center gap-1 transition-colors"
-          >
-            <Lock className="w-3 h-3" /> Admin Login
-          </Link>
+        <div>
+          <h4 className="text-white font-semibold mb-4">Solutions</h4>
+          <ul className="space-y-2 text-sm">
+            <li>Custom Cables</li>
+            <li>PCB Assembly</li>
+            <li>Box Build</li>
+            <li>IoT Integration</li>
+          </ul>
+        </div>
+        <div>
+          <h4 className="text-white font-semibold mb-4">Company</h4>
+          <ul className="space-y-2 text-sm">
+            <li>About Surja</li>
+            <li>Quality Control</li>
+            <li>Certifications</li>
+            <li>Contact OEM Sales</li>
+          </ul>
+        </div>
+        <div>
+          <h4 className="text-white font-semibold mb-4">Internal</h4>
+          <div className="flex flex-col gap-2 items-start">
+            <p className="text-xs text-slate-500">Employee access only.</p>
+            <button 
+              onClick={() => navigate({ type: 'ADMIN_LOGIN' })}
+              className="text-slate-400 hover:text-white text-sm flex items-center gap-1 transition-colors"
+            >
+              <Lock className="w-3 h-3" /> Admin Login
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-  </footer>
-);
+    </footer>
+  );
+};
 
 export default function App() {
   const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [currentView, setCurrentView] = useState<ViewState>({ type: 'HOME' });
+
+  const navigate = (view: ViewState) => {
+    setCurrentView(view);
+  };
 
   const handleAddProduct = (newProduct: Product) => {
     setProducts([...products, newProduct]);
   };
 
+  let content;
+  switch (currentView.type) {
+    case 'HOME':
+      content = <HomeView products={products} />;
+      break;
+    case 'CATALOG':
+      content = <CatalogView products={products} />;
+      break;
+    case 'PRODUCT_DETAIL':
+      content = <ProductDetailView products={products} />;
+      break;
+    case 'DEMOS':
+      content = <DemosView products={products} />;
+      break;
+    case 'ADMIN_LOGIN':
+      content = <AdminLoginView onLoginSuccess={() => setIsAdmin(true)} />;
+      break;
+    case 'ADMIN_DASHBOARD':
+      content = <AdminDashboardView onAddProduct={handleAddProduct} isAdmin={isAdmin} />;
+      break;
+    default:
+      content = <HomeView products={products} />;
+  }
+
   return (
-    <BrowserRouter>
+    <NavigationContext.Provider value={{ currentView, navigate }}>
       <div className="min-h-screen bg-white flex flex-col font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-900">
         <ScrollToTop />
         <Navbar isAdmin={isAdmin} />
         
         <main className="flex-grow">
-          <Routes>
-            <Route path="/" element={<HomeView products={products} />} />
-            <Route path="/products" element={<CatalogView products={products} />} />
-            <Route path="/product/:productId" element={<ProductDetailView products={products} />} />
-            <Route path="/demos" element={<DemosView products={products} />} />
-            <Route path="/admin/login" element={<AdminLoginView onLoginSuccess={() => setIsAdmin(true)} />} />
-            <Route path="/admin/dashboard" element={<AdminDashboardView onAddProduct={handleAddProduct} isAdmin={isAdmin} />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+          {content}
         </main>
 
         <Footer />
       </div>
-    </BrowserRouter>
+    </NavigationContext.Provider>
   );
 }
