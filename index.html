@@ -23,6 +23,10 @@
         background: #94a3b8; 
       }
     </style>
+    <script>
+      // Polyfill process for browser environment to prevent ReferenceError
+      window.process = window.process || { env: { NODE_ENV: 'production' } };
+    </script>
   <script type="importmap">
 {
   "imports": {
@@ -38,5 +42,6 @@
 </head>
   <body>
     <div id="root"></div>
+    <script type="module" src="./index.tsx"></script>
   </body>
 </html>
