@@ -9,6 +9,10 @@ export const INITIAL_PRODUCTS: Product[] = [
     price: 4.50, // Wholesale unit estimate
     category: Category.CABLES_CONNECTORS,
     imageUrl: 'https://images.unsplash.com/photo-1544118849-c187bac3b663?q=80&w=2070&auto=format&fit=crop',
+    additionalImages: [
+      'https://images.unsplash.com/photo-1606229338300-e1880a1b5722?q=80&w=2070&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1563770095-39d468f9a51d?q=80&w=2070&auto=format&fit=crop'
+    ],
     features: ['Reinforced Strain Relief', 'E-Marker Chip', '10,000+ Bend Lifespan', 'Custom Logo Molding'],
     specs: {
       'Length': '1m / 2m / 3m Custom',
@@ -173,7 +177,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     description: 'Rugged solar-assisted power bank designed for outdoor and emergency use. Water-resistant with LED flashlight.',
     price: 16.75,
     category: Category.POWER_SOLUTIONS,
-    imageUrl: 'https://images.unsplash.com/photo-1621343921010-4a35b3e0b50f?q=80&w=2070&auto=format&fit=crop',
+    imageUrl: 'https://images.unsplash.com/photo-1621343921010-4a35b3e0b50f?q=80&w=2070&auto=format&fit=crop', 
     features: ['Solar Charging', 'Dual USB Output', 'IPX5 Water Resistance', 'LED Torch'],
     specs: {
       'Capacity': '20,000 mAh',

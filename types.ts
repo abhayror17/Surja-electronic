@@ -13,6 +13,7 @@ export interface Product {
   price: number; // Represents MOQ unit price or sample price
   category: Category;
   imageUrl: string;
+  additionalImages?: string[];
   features: string[];
   specs: Record<string, string>;
 }

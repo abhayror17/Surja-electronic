@@ -297,11 +297,13 @@ const ProductDetailView = ({ products }: { products: Product[] }) => {
   // Memoize gallery images to prevent recreation on every render
   const galleryImages = useMemo(() => {
     if (!product) return [];
-    return [
-      product.imageUrl,
-      'https://images.unsplash.com/photo-1580894742597-87bc8789db3d?q=80&w=800&auto=format&fit=crop', // Lab testing
-      'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=800&auto=format&fit=crop'  // Industrial setup
-    ];
+    // Start with the main image
+    const images = [product.imageUrl];
+    // Add additional images if they exist
+    if (product.additionalImages && product.additionalImages.length > 0) {
+      images.push(...product.additionalImages);
+    }
+    return images;
   }, [product]);
 
   useEffect(() => {
@@ -363,25 +365,27 @@ const ProductDetailView = ({ products }: { products: Product[] }) => {
               {/* Progress bar for auto-slide visualization (optional but nice touch) */}
               <div className="absolute bottom-0 left-0 h-1 bg-indigo-600/50 w-full animate-[loading_4s_linear_infinite]" key={activeImage}></div>
             </div>
-            <div className="grid grid-cols-3 gap-4">
-               {galleryImages.map((img, idx) => (
-                 <button 
-                   key={idx} 
-                   onClick={() => setActiveImage(img)}
-                   className={`aspect-square rounded-xl bg-slate-100 overflow-hidden border-2 transition-all duration-200 ${
-                     activeImage === img 
-                       ? 'border-indigo-600 ring-2 ring-indigo-100 opacity-100' 
-                       : 'border-slate-200 opacity-60 hover:opacity-100 hover:border-indigo-300'
-                   }`}
-                 >
-                   <img 
-                      src={img} 
-                      className="w-full h-full object-cover" 
-                      alt={`View ${idx + 1}`} 
-                    />
-                 </button>
-               ))}
-            </div>
+            {galleryImages.length > 1 && (
+              <div className="grid grid-cols-3 gap-4">
+                 {galleryImages.map((img, idx) => (
+                   <button 
+                     key={idx} 
+                     onClick={() => setActiveImage(img)}
+                     className={`aspect-square rounded-xl bg-slate-100 overflow-hidden border-2 transition-all duration-200 ${
+                       activeImage === img 
+                         ? 'border-indigo-600 ring-2 ring-indigo-100 opacity-100' 
+                         : 'border-slate-200 opacity-60 hover:opacity-100 hover:border-indigo-300'
+                     }`}
+                   >
+                     <img 
+                        src={img} 
+                        className="w-full h-full object-cover" 
+                        alt={`View ${idx + 1}`} 
+                      />
+                   </button>
+                 ))}
+              </div>
+            )}
           </div>
 
           {/* Right: Info */}
