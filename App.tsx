@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useContext, createContext } from 'react';
+import React, { useState, useEffect, useContext, createContext, useMemo } from 'react';
 import { 
   Menu, X, ShoppingBag, Layers, ArrowRight, Star, 
   ChevronRight, ExternalLink, Filter, Search, Grid, List, Zap, Cpu, Cable,
   Lock, Plus, Trash, CheckCircle
 } from 'lucide-react';
-import { Category, Product, DemoProject, ViewState } from './types';
-import { INITIAL_PRODUCTS, DEMOS } from './constants';
+import { Category, Product, ViewState } from './types';
+import { INITIAL_PRODUCTS } from './constants';
 import ChatWidget from './components/ChatWidget';
 
 // --- Navigation Context ---
@@ -41,7 +41,6 @@ const Navbar = ({ isAdmin }: { isAdmin: boolean }) => {
   const navItems: { label: string; view: ViewState }[] = [
     { label: 'Home', view: { type: 'HOME' } },
     { label: 'Products', view: { type: 'CATALOG' } },
-    { label: 'Manufacturing & QA', view: { type: 'DEMOS' } },
   ];
 
   if (isAdmin) {
@@ -141,36 +140,13 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
           <h3 className="font-bold text-lg text-slate-900 group-hover:text-indigo-600 transition-colors">
             {product.name}
           </h3>
-          <span className="font-semibold text-slate-900">${product.price.toFixed(2)} <span className="text-xs font-normal text-slate-400">/unit (est)</span></span>
+          <span className="font-semibold text-slate-900">₹{product.price.toFixed(2)} <span className="text-xs font-normal text-slate-400">/unit (est)</span></span>
         </div>
         <p className="text-slate-500 text-sm mb-4 line-clamp-2 flex-1">{product.description}</p>
         <div className="flex items-center text-indigo-600 font-medium text-sm mt-auto">
           View Specs <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
         </div>
       </div>
-    </div>
-  );
-};
-
-const DemoCard: React.FC<{ demo: DemoProject }> = ({ demo }) => {
-  const { navigate } = useNavigation();
-  return (
-    <div onClick={() => navigate({ type: 'DEMOS' })} className="group cursor-pointer">
-      <div className="relative rounded-2xl overflow-hidden mb-4 aspect-video">
-        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors z-10" />
-        <img 
-          src={demo.imageUrl} 
-          alt={demo.title} 
-          className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
-        />
-        <div className="absolute bottom-4 left-4 z-20">
-          <span className="bg-indigo-600 text-white text-xs px-2 py-1 rounded mb-2 inline-block">Factory Insight</span>
-        </div>
-      </div>
-      <h3 className="font-bold text-lg text-slate-900 mb-1 group-hover:text-indigo-600 transition-colors">
-        {demo.title}
-      </h3>
-      <p className="text-slate-500 text-sm line-clamp-2">{demo.description}</p>
     </div>
   );
 };
@@ -199,12 +175,6 @@ const HomeView = ({ products }: { products: Product[] }) => {
             >
               Browse Catalogue
             </button>
-            <button 
-              onClick={() => navigate({ type: 'DEMOS' })}
-              className="px-8 py-4 bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm rounded-full font-semibold transition-all flex items-center justify-center"
-            >
-              Factory Tours
-            </button>
           </div>
         </div>
       </section>
@@ -227,29 +197,6 @@ const HomeView = ({ products }: { products: Product[] }) => {
           {products.slice(0, 3).map(product => (
             <ProductCard key={product.id} product={product} />
           ))}
-        </div>
-      </section>
-
-      {/* Featured Demos */}
-      <section className="bg-slate-50 py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-end mb-10">
-            <div>
-              <h2 className="text-3xl font-bold text-slate-900">Manufacturing Excellence</h2>
-              <p className="text-slate-500 mt-2">See our production lines and quality assurance in action.</p>
-            </div>
-            <button 
-              onClick={() => navigate({ type: 'DEMOS' })}
-              className="text-indigo-600 font-medium hover:text-indigo-700 flex items-center"
-            >
-              View all demos <ArrowRight className="w-4 h-4 ml-1" />
-            </button>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {DEMOS.slice(0, 3).map(demo => (
-              <DemoCard key={demo.id} demo={demo} />
-            ))}
-          </div>
         </div>
       </section>
     </div>
@@ -345,67 +292,6 @@ const CatalogView = ({ products }: { products: Product[] }) => {
   );
 };
 
-const DemosView = ({ products }: { products: Product[] }) => {
-  const { navigate } = useNavigation();
-  return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 min-h-screen">
-      <div className="mb-12 text-center max-w-2xl mx-auto">
-        <h1 className="text-4xl font-bold text-slate-900 mb-4">Manufacturing Showcase</h1>
-        <p className="text-slate-500 text-lg">
-          Explore our production capabilities, quality assurance testing, and successful client integrations.
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 gap-12">
-        {DEMOS.map((demo, idx) => {
-          const relatedProducts = products.filter(p => demo.relatedProductIds.includes(p.id));
-          
-          return (
-            <div key={demo.id} className={`flex flex-col lg:flex-row gap-8 items-center ${idx % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}>
-              <div className="w-full lg:w-1/2">
-                <div className="aspect-video rounded-2xl overflow-hidden shadow-lg relative group">
-                  <img src={demo.imageUrl} alt={demo.title} className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button className="bg-white/20 backdrop-blur border border-white/50 text-white px-6 py-3 rounded-full font-medium">
-                      Watch Full Video
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <div className="w-full lg:w-1/2 space-y-6">
-                <div>
-                   <span className="text-indigo-600 font-semibold text-sm tracking-wide uppercase mb-2 block">{demo.date}</span>
-                  <h2 className="text-3xl font-bold text-slate-900 mb-4">{demo.title}</h2>
-                  <p className="text-slate-600 leading-relaxed text-lg">{demo.description}</p>
-                </div>
-                
-                <div className="border-t border-slate-200 pt-6">
-                  <h4 className="text-sm font-semibold text-slate-900 mb-3">Featured Components:</h4>
-                  <div className="flex flex-wrap gap-4">
-                    {relatedProducts.map(p => (
-                      <div 
-                        key={p.id} 
-                        onClick={() => navigate({ type: 'PRODUCT_DETAIL', productId: p.id })}
-                        className="flex items-center gap-3 bg-slate-50 hover:bg-slate-100 p-2 pr-4 rounded-xl border border-slate-200 cursor-pointer transition-colors"
-                      >
-                        <img src={p.imageUrl} alt={p.name} className="w-10 h-10 rounded-lg object-cover" />
-                        <div>
-                          <p className="font-bold text-slate-900 text-sm">{p.name}</p>
-                          <p className="text-slate-500 text-xs">${p.price}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-};
-
 const ProductDetailView = ({ products }: { products: Product[] }) => {
   const { currentView, navigate } = useNavigation();
   const productId = currentView.type === 'PRODUCT_DETAIL' ? currentView.productId : null;
@@ -413,11 +299,36 @@ const ProductDetailView = ({ products }: { products: Product[] }) => {
 
   const [activeImage, setActiveImage] = useState('');
 
+  // Memoize gallery images to prevent recreation on every render
+  const galleryImages = useMemo(() => {
+    if (!product) return [];
+    return [
+      product.imageUrl,
+      'https://images.unsplash.com/photo-1580894742597-87bc8789db3d?q=80&w=800&auto=format&fit=crop', // Lab testing
+      'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=800&auto=format&fit=crop'  // Industrial setup
+    ];
+  }, [product]);
+
   useEffect(() => {
     if (product) {
       setActiveImage(product.imageUrl);
     }
   }, [product]);
+
+  // Auto-slide effect
+  useEffect(() => {
+    if (galleryImages.length <= 1) return;
+
+    const intervalId = setInterval(() => {
+      setActiveImage(current => {
+        const currentIndex = galleryImages.indexOf(current);
+        const nextIndex = (currentIndex + 1) % galleryImages.length;
+        return galleryImages[nextIndex];
+      });
+    }, 4000); // Change image every 4 seconds
+
+    return () => clearInterval(intervalId);
+  }, [galleryImages, activeImage]); // activeImage dependency ensures timer resets on manual interaction
 
   if (!product) {
     return (
@@ -432,14 +343,6 @@ const ProductDetailView = ({ products }: { products: Product[] }) => {
       </div>
     );
   }
-
-  // Define some diverse mock images to simulate a gallery.
-  // Using high quality manufacturing/tech images as fallbacks for the gallery to create an immersive feel.
-  const galleryImages = [
-    product.imageUrl,
-    'https://images.unsplash.com/photo-1580894742597-87bc8789db3d?q=80&w=800&auto=format&fit=crop', // Lab testing
-    'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=800&auto=format&fit=crop'  // Industrial setup
-  ];
 
   const relatedProducts = products
     .filter(p => p.category === product.category && p.id !== product.id)
@@ -456,12 +359,14 @@ const ProductDetailView = ({ products }: { products: Product[] }) => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           {/* Left: Gallery */}
           <div className="space-y-4">
-            <div className="aspect-[4/3] rounded-3xl overflow-hidden bg-slate-100 border border-slate-200 shadow-sm relative">
+            <div className="aspect-[4/3] rounded-3xl overflow-hidden bg-slate-100 border border-slate-200 shadow-sm relative group">
               <img 
                 src={activeImage || product.imageUrl} 
                 alt={product.name} 
-                className="w-full h-full object-cover transition-opacity duration-300" 
+                className="w-full h-full object-cover transition-all duration-500 ease-in-out" 
               />
+              {/* Progress bar for auto-slide visualization (optional but nice touch) */}
+              <div className="absolute bottom-0 left-0 h-1 bg-indigo-600/50 w-full animate-[loading_4s_linear_infinite]" key={activeImage}></div>
             </div>
             <div className="grid grid-cols-3 gap-4">
                {galleryImages.map((img, idx) => (
@@ -495,7 +400,7 @@ const ProductDetailView = ({ products }: { products: Product[] }) => {
             </div>
 
             <div className="flex items-end gap-4 mb-8">
-              <span className="text-3xl font-bold text-slate-900">${product.price.toFixed(2)}</span>
+              <span className="text-3xl font-bold text-slate-900">₹{product.price.toFixed(2)}</span>
               <span className="text-slate-500 mb-1">/ unit (Wholesale Estimate)</span>
             </div>
 
@@ -761,7 +666,7 @@ const AdminDashboardView = ({ onAddProduct, isAdmin }: { onAddProduct: (p: Produ
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Price (USD)</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Price (₹)</label>
               <input type="number" name="price" value={formData.price} onChange={handleInputChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500" />
             </div>
             <div>
@@ -885,28 +790,9 @@ const Footer = () => {
 };
 
 export default function App() {
-  // Use separate state for custom added products.
-  // This allows INITIAL_PRODUCTS (from code) to update independently of user additions.
-  const [customProducts, setCustomProducts] = useState<Product[]>(() => {
-    try {
-      const savedProducts = localStorage.getItem('suraj_custom_products');
-      return savedProducts ? JSON.parse(savedProducts) : [];
-    } catch (e) {
-      console.error("Failed to load custom products from local storage", e);
-      return [];
-    }
-  });
-
-  useEffect(() => {
-    try {
-      localStorage.setItem('suraj_custom_products', JSON.stringify(customProducts));
-    } catch (e) {
-      console.error("Failed to save custom products to local storage", e);
-    }
-  }, [customProducts]);
-
-  // Merge static catalogue from code with dynamic custom products
-  const products = [...INITIAL_PRODUCTS, ...customProducts];
+  // Products now initialized directly from constants (code only)
+  // No local storage persistence for new items as requested
+  const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
 
   const [isAdmin, setIsAdmin] = useState(false);
   const [currentView, setCurrentView] = useState<ViewState>({ type: 'HOME' });
@@ -916,7 +802,7 @@ export default function App() {
   };
 
   const handleAddProduct = (newProduct: Product) => {
-    setCustomProducts(prev => [...prev, newProduct]);
+    setProducts(prev => [...prev, newProduct]);
   };
 
   let content;
@@ -929,9 +815,6 @@ export default function App() {
       break;
     case 'PRODUCT_DETAIL':
       content = <ProductDetailView products={products} />;
-      break;
-    case 'DEMOS':
-      content = <DemosView products={products} />;
       break;
     case 'ADMIN_LOGIN':
       content = <AdminLoginView onLoginSuccess={() => setIsAdmin(true)} />;

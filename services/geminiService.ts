@@ -25,7 +25,7 @@ export const askProductExpert = async (
     Here are the product details:
     Tagline: ${product.tagline}
     Description: ${product.description}
-    Unit Price Estimate: $${product.price} (Note: Bulk pricing available)
+    Unit Price Estimate: ₹${product.price} (Note: Bulk pricing available)
     Category: ${product.category}
     Features: ${product.features.join(', ')}
     Technical Specs: ${JSON.stringify(product.specs)}

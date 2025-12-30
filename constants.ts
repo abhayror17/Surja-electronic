@@ -1,4 +1,4 @@
-import { Category, Product, DemoProject } from './types';
+import { Category, Product } from './types';
 
 export const INITIAL_PRODUCTS: Product[] = [
   {
@@ -96,32 +96,107 @@ export const INITIAL_PRODUCTS: Product[] = [
       'Operating Temp': '-40°C to 85°C',
       'Compliance': 'RoHS, IPC Class 3'
     }
-  }
-];
+  },
+ 
+  {
+    id: 'p7',
+    name: 'AeroBuds ANC TWS',
+    tagline: 'Silence the noise. Focus on sound.',
+    description: 'White-label true wireless earbuds with Active Noise Cancellation and low-latency gaming mode. Designed for mass consumer electronics brands.',
+    price: 18.00,
+    category: Category.CONSUMER_ELECTRONICS,
+    imageUrl: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?q=80&w=2070&auto=format&fit=crop',
+    features: ['Active Noise Cancellation', 'Low-Latency Mode', 'Touch Controls', 'Custom Logo Case'],
+    specs: {
+      'Bluetooth': '5.3',
+      'Battery Life': '6h + 24h Case',
+      'Drivers': '10mm Dynamic',
+      'Charging': 'USB-C Fast Charge'
+    }
+  },
 
-export const DEMOS: DemoProject[] = [
   {
-    id: 'd1',
-    title: 'Automated Cable Stress Testing',
-    description: 'Inside our QA lab: How we ensure the ProFlex cables withstand over 10,000 bends using robotic stress arms.',
-    imageUrl: 'https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?q=80&w=2070&auto=format&fit=crop',
-    relatedProductIds: ['p1'],
-    date: 'QA Protocol'
+    id: 'p8',
+    name: 'MagSnap Wireless Charger',
+    tagline: 'Snap. Charge. Go.',
+    description: 'Magnetic wireless charging pad optimized for iPhone and Qi-enabled devices. Ultra-slim aluminum housing for premium OEM branding.',
+    price: 9.50,
+    category: Category.POWER_SOLUTIONS,
+    imageUrl: 'https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?q=80&w=2070&auto=format&fit=crop',
+    features: ['MagSafe-Compatible', 'Overheat Protection', 'Foreign Object Detection', 'Slim Aluminum Body'],
+    specs: {
+      'Output': '15W Max',
+      'Standard': 'Qi Certified',
+      'Input': 'USB-C',
+      'Thickness': '6.8mm'
+    }
   },
+
   {
-    id: 'd2',
-    title: 'Smart Hotel Implementation',
-    description: 'Case Study: Deploying 5,000 OmniControl remotes and IoT modules in a luxury hotel chain for centralized room management.',
-    imageUrl: 'https://images.unsplash.com/photo-1558002038-1091a166111c?q=80&w=2069&auto=format&fit=crop',
-    relatedProductIds: ['p2', 'p4'],
-    date: 'Case Study'
+    id: 'p9',
+    name: 'FlexDock USB-C Hub',
+    tagline: 'One port. Total expansion.',
+    description: 'Compact USB-C hub with HDMI, USB-A, SD card, and PD charging pass-through. Ideal for laptops and tablets.',
+    price: 14.25,
+    category: Category.CABLES_CONNECTORS,
+    imageUrl: 'https://images.unsplash.com/photo-1616578273577-7b4cfc8b7d6a?q=80&w=2070&auto=format&fit=crop',
+    features: ['4K HDMI Output', 'PD Pass-Through', 'Plug & Play', 'Aluminum Shell'],
+    specs: {
+      'HDMI': '4K @ 60Hz',
+      'USB Ports': '2x USB-A 3.0',
+      'Card Reader': 'SD / microSD',
+      'Power': '100W PD Input'
+    }
   },
+
   {
-    id: 'd3',
-    title: 'SMT Assembly Line Tour',
-    description: 'A walkthrough of our state-of-the-art Surface Mount Technology (SMT) line where the GaNPrime adapters are manufactured.',
-    imageUrl: 'https://images.unsplash.com/photo-1565514020176-87d25b410976?q=80&w=2069&auto=format&fit=crop',
-    relatedProductIds: ['p3', 'p6'],
-    date: 'Factory Tour'
+    id: 'p10',
+    name: 'Smart Energy Meter PCB',
+    tagline: 'Measure smarter. Save energy.',
+    description: 'Embedded PCB solution for smart energy meters with real-time monitoring and cloud connectivity support.',
+    price: 22.00,
+    category: Category.COMPONENTS_PCB,
+    imageUrl: 'https://images.unsplash.com/photo-1581092334651-ddf26d9c9b02?q=80&w=2070&auto=format&fit=crop',
+    features: ['Real-Time Monitoring', 'Secure MCU', 'Low Power Design', 'OTA Firmware'],
+    specs: {
+      'MCU': 'ARM Cortex-M4',
+      'Connectivity': 'Wi-Fi / NB-IoT',
+      'Accuracy': 'Class 1',
+      'Voltage Range': '110–240V'
+    }
+  },
+
+  {
+    id: 'p11',
+    name: 'SolarCharge Power Bank',
+    tagline: 'Power from the sun.',
+    description: 'Rugged solar-assisted power bank designed for outdoor and emergency use. Water-resistant with LED flashlight.',
+    price: 16.75,
+    category: Category.POWER_SOLUTIONS,
+    imageUrl: 'https://images.unsplash.com/photo-1621343921010-4a35b3e0b50f?q=80&w=2070&auto=format&fit=crop',
+    features: ['Solar Charging', 'Dual USB Output', 'IPX5 Water Resistance', 'LED Torch'],
+    specs: {
+      'Capacity': '20,000 mAh',
+      'Input': 'Solar / USB-C',
+      'Output': '2x USB-A',
+      'Build': 'Rubberized ABS'
+    }
+  },
+
+  {
+    id: 'p12',
+    name: 'EdgeCam AI Security Module',
+    tagline: 'Vision with intelligence.',
+    description: 'AI-enabled camera module for smart security systems with edge processing and facial recognition support.',
+    price: 32.00,
+    category: Category.COMPONENTS_PCB,
+    imageUrl: 'https://images.unsplash.com/photo-1580894894513-541e068a3e2b?q=80&w=2070&auto=format&fit=crop',
+    features: ['Edge AI Processing', 'Low-Light Vision', 'Secure Boot', 'Compact Design'],
+    specs: {
+      'Sensor': '8MP CMOS',
+      'Processor': 'AI SoC with NPU',
+      'Video': '4K @ 30fps',
+      'Interface': 'MIPI CSI-2'
+    }
   }
 ];
