@@ -61,6 +61,10 @@ export const INITIAL_PRODUCTS: Product[] = [
     price: 8.75,
     category: Category.COMPONENTS_PCB,
     imageUrl: 'https://images.unsplash.com/photo-1553406830-ef2513450d76?q=80&w=2070&auto=format&fit=crop',
+    additionalImages: [
+      'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?q=80&w=2070&auto=format&fit=crop'
+    ],
     features: ['Dual-Band Wi-Fi', 'Matter Support', 'Low Power Consumption', 'OTA Update Ready'],
     specs: {
       'Chipset': 'Suraj S-Series SoC',
@@ -177,7 +181,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     description: 'Rugged solar-assisted power bank designed for outdoor and emergency use. Water-resistant with LED flashlight.',
     price: 16.75,
     category: Category.POWER_SOLUTIONS,
-    imageUrl: 'https://images.unsplash.com/photo-1621343921010-4a35b3e0b50f?q=80&w=2070&auto=format&fit=crop', 
+    imageUrl: 'https://images.unsplash.com/photo-1621343921010-4a35b3e0b50f?q=80&w=2070&auto=format&fit=crop',
     features: ['Solar Charging', 'Dual USB Output', 'IPX5 Water Resistance', 'LED Torch'],
     specs: {
       'Capacity': '20,000 mAh',
