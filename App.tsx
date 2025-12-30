@@ -183,7 +183,7 @@ const HomeView = ({ products }: { products: Product[] }) => {
     <div className="space-y-20 pb-20">
       {/* Hero */}
       <section className="relative bg-slate-900 text-white py-24 px-4 overflow-hidden">
-        <div className="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?q=80&w=2069&auto=format&fit=crop')] bg-cover bg-center" />
+        <div className="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2069&auto=format&fit=crop')] bg-cover bg-center" />
         <div className="max-w-7xl mx-auto relative z-10 flex flex-col items-center text-center">
           <span className="text-indigo-400 font-semibold tracking-wider uppercase mb-4">Leading ODM + OEM Manufacturer</span>
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight">
@@ -416,11 +416,12 @@ const ProductDetailView = ({ products }: { products: Product[] }) => {
     );
   }
 
-  // Define some diverse mock images to simulate a gallery
+  // Define some diverse mock images to simulate a gallery.
+  // Using high quality manufacturing/tech images as fallbacks for the gallery to create an immersive feel.
   const galleryImages = [
     product.imageUrl,
-    'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800&auto=format&fit=crop'
+    'https://images.unsplash.com/photo-1580894742597-87bc8789db3d?q=80&w=800&auto=format&fit=crop', // Lab testing
+    'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=800&auto=format&fit=crop'  // Industrial setup
   ];
 
   const relatedProducts = products
@@ -686,7 +687,7 @@ const AdminDashboardView = ({ onAddProduct, isAdmin }: { onAddProduct: (p: Produ
         description: formData.description || '',
         price: Number(formData.price),
         category: formData.category as Category,
-        imageUrl: formData.imageUrl || 'https://via.placeholder.com/800x600?text=No+Image',
+        imageUrl: formData.imageUrl || 'https://images.unsplash.com/photo-1550009158-9ebf69173e03?auto=format&fit=crop&w=800&q=80',
         features: formData.features || [],
         specs: formData.specs || {}
       };

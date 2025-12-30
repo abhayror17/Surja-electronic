@@ -8,7 +8,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     description: 'A premium nylon-braided USB-C to USB-C cable supporting 100W PD charging and 40Gbps data transfer. Customizable length and color patterns for OEM branding.',
     price: 4.50, // Wholesale unit estimate
     category: Category.CABLES_CONNECTORS,
-    imageUrl: 'https://images.unsplash.com/photo-1603539278917-d5d1421f681d?q=80&w=2070&auto=format&fit=crop',
+    imageUrl: 'https://images.unsplash.com/photo-1544118849-c187bac3b663?q=80&w=2070&auto=format&fit=crop',
     features: ['Reinforced Strain Relief', 'E-Marker Chip', '10,000+ Bend Lifespan', 'Custom Logo Molding'],
     specs: {
       'Length': '1m / 2m / 3m Custom',
@@ -24,7 +24,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     description: 'White-label smart remote control featuring voice command support, backlit keys, and universal IR/RF compatibility. Ideal for Smart TV and Set-Top Box manufacturers.',
     price: 12.00,
     category: Category.CONSUMER_ELECTRONICS,
-    imageUrl: 'https://images.unsplash.com/photo-1574315042629-411a00a221f7?q=80&w=2070&auto=format&fit=crop',
+    imageUrl: 'https://images.unsplash.com/photo-1635338870719-7555898d248b?q=80&w=2070&auto=format&fit=crop',
     features: ['Voice Assistant Mic', 'Bluetooth 5.2 & IR', 'Programmable Hotkeys', 'Anti-Microbial Coating'],
     specs: {
       'Range': '15m (Bluetooth) / 10m (IR)',
@@ -40,7 +40,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     description: 'Next-gen Gallium Nitride (GaN) power adapter. 50% smaller than standard chargers with superior thermal management. Available with interchangeable regional plugs.',
     price: 15.50,
     category: Category.POWER_SOLUTIONS,
-    imageUrl: 'https://images.unsplash.com/photo-1620700878206-8d626372337d?q=80&w=2070&auto=format&fit=crop',
+    imageUrl: 'https://images.unsplash.com/photo-1583863788434-e58a36330cf0?q=80&w=2070&auto=format&fit=crop',
     features: ['GaN Technology', 'Foldable Prongs', 'Multi-Device Charging', 'Over-Voltage Protection'],
     specs: {
       'Input': '100-240V ~ 50/60Hz',
@@ -56,7 +56,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     description: 'Integrated PCB module for smart home appliances. Features Wi-Fi, BLE, and temperature/humidity sensing capabilities on a compact footprint.',
     price: 8.75,
     category: Category.COMPONENTS_PCB,
-    imageUrl: 'https://images.unsplash.com/photo-1605396559384-5f53c1555238?q=80&w=2070&auto=format&fit=crop',
+    imageUrl: 'https://images.unsplash.com/photo-1553406830-ef2513450d76?q=80&w=2070&auto=format&fit=crop',
     features: ['Dual-Band Wi-Fi', 'Matter Support', 'Low Power Consumption', 'OTA Update Ready'],
     specs: {
       'Chipset': 'Suraj S-Series SoC',
@@ -72,7 +72,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     description: 'A powerful Android TV streaming dongle ready for branding. Supports 4K HDR, Dolby Atmos, and comes with a customizable launcher.',
     price: 28.00,
     category: Category.CONSUMER_ELECTRONICS,
-    imageUrl: 'https://images.unsplash.com/photo-1599849929239-0824ba464195?q=80&w=2070&auto=format&fit=crop',
+    imageUrl: 'https://images.unsplash.com/photo-1544896796-01584282531e?q=80&w=2070&auto=format&fit=crop',
     features: ['4K HDR10+', 'Google Assistant', 'Chromecast Built-in', 'Custom Boot Logo'],
     specs: {
       'OS': 'Android TV 12',
@@ -88,7 +88,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     description: 'Custom PCB assembly designed for industrial HMIs. Resistant to vibration, dust, and extreme temperatures.',
     price: 45.00,
     category: Category.COMPONENTS_PCB,
-    imageUrl: 'https://images.unsplash.com/photo-1563770094-123cd20761e0?q=80&w=2070&auto=format&fit=crop',
+    imageUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop',
     features: ['High-Temp Tolerance', 'Conformal Coating', 'Touch Controller', 'EMI Shielding'],
     specs: {
       'Layers': '6-Layer FR4',
@@ -104,7 +104,7 @@ export const DEMOS: DemoProject[] = [
     id: 'd1',
     title: 'Automated Cable Stress Testing',
     description: 'Inside our QA lab: How we ensure the ProFlex cables withstand over 10,000 bends using robotic stress arms.',
-    imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070&auto=format&fit=crop',
+    imageUrl: 'https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?q=80&w=2070&auto=format&fit=crop',
     relatedProductIds: ['p1'],
     date: 'QA Protocol'
   },
@@ -112,7 +112,7 @@ export const DEMOS: DemoProject[] = [
     id: 'd2',
     title: 'Smart Hotel Implementation',
     description: 'Case Study: Deploying 5,000 OmniControl remotes and IoT modules in a luxury hotel chain for centralized room management.',
-    imageUrl: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=2069&auto=format&fit=crop',
+    imageUrl: 'https://images.unsplash.com/photo-1558002038-1091a166111c?q=80&w=2069&auto=format&fit=crop',
     relatedProductIds: ['p2', 'p4'],
     date: 'Case Study'
   },
@@ -120,7 +120,7 @@ export const DEMOS: DemoProject[] = [
     id: 'd3',
     title: 'SMT Assembly Line Tour',
     description: 'A walkthrough of our state-of-the-art Surface Mount Technology (SMT) line where the GaNPrime adapters are manufactured.',
-    imageUrl: 'https://images.unsplash.com/photo-1563770094-2792b02a9699?q=80&w=2069&auto=format&fit=crop',
+    imageUrl: 'https://images.unsplash.com/photo-1565514020176-87d25b410976?q=80&w=2069&auto=format&fit=crop',
     relatedProductIds: ['p3', 'p6'],
     date: 'Factory Tour'
   }
