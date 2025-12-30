@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useContext, createContext, useMemo } from 'react';
 import { 
-  Menu, X, ShoppingBag, Layers, ArrowRight, Star, 
-  ChevronRight, ExternalLink, Filter, Search, Grid, List, Zap, Cpu, Cable,
-  Lock, Plus, Trash, CheckCircle
+  Menu, X, Layers, ArrowRight, Star, Search, Cpu, Plus, Minus
 } from 'lucide-react';
 import { Category, Product, ViewState } from './types';
 import { INITIAL_PRODUCTS } from './constants';
@@ -34,7 +32,7 @@ const ScrollToTop = () => {
 
 // --- Sub-components ---
 
-const Navbar = ({ isAdmin }: { isAdmin: boolean }) => {
+const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { currentView, navigate } = useNavigation();
 
@@ -42,10 +40,6 @@ const Navbar = ({ isAdmin }: { isAdmin: boolean }) => {
     { label: 'Home', view: { type: 'HOME' } },
     { label: 'Products', view: { type: 'CATALOG' } },
   ];
-
-  if (isAdmin) {
-    navItems.push({ label: 'Admin Dashboard', view: { type: 'ADMIN_DASHBOARD' } });
-  }
 
   const isActive = (view: ViewState) => {
     return currentView.type === view.type;
@@ -298,6 +292,7 @@ const ProductDetailView = ({ products }: { products: Product[] }) => {
   const product = products.find(p => p.id === productId);
 
   const [activeImage, setActiveImage] = useState('');
+  const [quantity, setQuantity] = useState(1);
 
   // Memoize gallery images to prevent recreation on every render
   const galleryImages = useMemo(() => {
@@ -408,9 +403,26 @@ const ProductDetailView = ({ products }: { products: Product[] }) => {
               {product.description}
             </p>
 
-            <div className="flex gap-4 mb-10">
+            <div className="flex flex-col sm:flex-row gap-4 mb-10">
+              {/* Quantity Selector */}
+              <div className="flex items-center bg-slate-50 rounded-xl border border-slate-200 h-[58px]">
+                 <button 
+                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                   className="w-12 h-full flex items-center justify-center text-slate-500 hover:text-indigo-600 hover:bg-slate-100 rounded-l-xl transition-colors"
+                 >
+                   <Minus className="w-4 h-4" />
+                 </button>
+                 <div className="w-12 text-center font-bold text-slate-900">{quantity}</div>
+                 <button 
+                   onClick={() => setQuantity(quantity + 1)}
+                   className="w-12 h-full flex items-center justify-center text-slate-500 hover:text-indigo-600 hover:bg-slate-100 rounded-r-xl transition-colors"
+                 >
+                   <Plus className="w-4 h-4" />
+                 </button>
+              </div>
+
               <button className="flex-1 bg-slate-900 text-white py-4 rounded-xl font-semibold hover:bg-slate-800 transition-colors shadow-lg shadow-slate-900/20">
-                Request Sample
+                Request Sample {quantity > 1 ? `(${quantity})` : ''}
               </button>
               <button className="px-6 py-4 border border-slate-200 rounded-xl font-semibold hover:bg-slate-50 transition-colors">
                 Bulk Quote
@@ -474,277 +486,10 @@ const ProductDetailView = ({ products }: { products: Product[] }) => {
   );
 };
 
-// --- Admin Views ---
-
-const AdminLoginView = ({ onLoginSuccess }: { onLoginSuccess: () => void }) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const { navigate } = useNavigation();
-
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (username === 'admin' && password === 'admin') {
-      onLoginSuccess();
-      navigate({ type: 'ADMIN_DASHBOARD' });
-    } else {
-      setError('Invalid credentials');
-    }
-  };
-
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
-      <div className="bg-white p-8 rounded-2xl shadow-xl border border-slate-200 max-w-md w-full">
-        <div className="flex justify-center mb-6">
-          <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center">
-            <Lock className="w-6 h-6 text-white" />
-          </div>
-        </div>
-        <h2 className="text-2xl font-bold text-center text-slate-900 mb-2">Admin Access</h2>
-        <p className="text-center text-slate-500 mb-8">Login to manage Suraj Electra catalogue</p>
-        
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Username</label>
-            <input 
-              type="text" 
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-              placeholder="Enter username"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Password</label>
-            <input 
-              type="password" 
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-              placeholder="Enter password"
-            />
-          </div>
-          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-          <button 
-            type="submit" 
-            className="w-full bg-slate-900 text-white py-3 rounded-lg font-semibold hover:bg-slate-800 transition-colors"
-          >
-            Login
-          </button>
-          <button 
-            type="button" 
-            onClick={() => navigate({ type: 'HOME' })}
-            className="w-full bg-white text-slate-600 py-3 rounded-lg font-semibold hover:bg-slate-50 border border-slate-200 transition-colors"
-          >
-            Cancel
-          </button>
-        </form>
-      </div>
-    </div>
-  );
-};
-
-const AdminDashboardView = ({ onAddProduct, isAdmin }: { onAddProduct: (p: Product) => void; isAdmin: boolean }) => {
-  const [formData, setFormData] = useState<Partial<Product>>({
-    name: '',
-    tagline: '',
-    description: '',
-    price: 0,
-    category: Category.CONSUMER_ELECTRONICS,
-    imageUrl: '',
-    features: [],
-    specs: {}
-  });
-  
-  const [featureInput, setFeatureInput] = useState('');
-  const [specKey, setSpecKey] = useState('');
-  const [specValue, setSpecValue] = useState('');
-  const [successMsg, setSuccessMsg] = useState('');
-  
-  const { navigate } = useNavigation();
-
-  useEffect(() => {
-    if (!isAdmin) {
-      navigate({ type: 'ADMIN_LOGIN' });
-    }
-  }, [isAdmin, navigate]);
-
-  if (!isAdmin) {
-    return null; 
-  }
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleAddFeature = () => {
-    if (featureInput.trim()) {
-      setFormData(prev => ({
-        ...prev,
-        features: [...(prev.features || []), featureInput.trim()]
-      }));
-      setFeatureInput('');
-    }
-  };
-
-  const handleAddSpec = () => {
-    if (specKey.trim() && specValue.trim()) {
-      setFormData(prev => ({
-        ...prev,
-        specs: { ...(prev.specs || {}), [specKey.trim()]: specValue.trim() }
-      }));
-      setSpecKey('');
-      setSpecValue('');
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (formData.name && formData.price && formData.category) {
-      const newProduct: Product = {
-        id: `p${Date.now()}`,
-        name: formData.name || 'Untitled',
-        tagline: formData.tagline || '',
-        description: formData.description || '',
-        price: Number(formData.price),
-        category: formData.category as Category,
-        imageUrl: formData.imageUrl || 'https://images.unsplash.com/photo-1550009158-9ebf69173e03?auto=format&fit=crop&w=800&q=80',
-        features: formData.features || [],
-        specs: formData.specs || {}
-      };
-      
-      onAddProduct(newProduct);
-      setSuccessMsg(`Product "${newProduct.name}" added successfully!`);
-      
-      // Reset form
-      setFormData({
-        name: '',
-        tagline: '',
-        description: '',
-        price: 0,
-        category: Category.CONSUMER_ELECTRONICS,
-        imageUrl: '',
-        features: [],
-        specs: {}
-      });
-      setTimeout(() => setSuccessMsg(''), 3000);
-    }
-  };
-
-  return (
-    <div className="max-w-4xl mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold text-slate-900 mb-8 flex items-center gap-3">
-        <Layers className="w-8 h-8 text-indigo-600" /> Admin Dashboard
-      </h1>
-      
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
-        <h2 className="text-xl font-semibold mb-6">Add New Product</h2>
-        
-        {successMsg && (
-          <div className="mb-6 p-4 bg-green-50 text-green-700 rounded-xl flex items-center gap-2">
-            <CheckCircle className="w-5 h-5" /> {successMsg}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Product Name</label>
-              <input name="name" value={formData.name} onChange={handleInputChange} required className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Tagline</label>
-              <input name="tagline" value={formData.tagline} onChange={handleInputChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500" />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
-            <textarea name="description" value={formData.description} onChange={handleInputChange} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500" />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Price (₹)</label>
-              <input type="number" name="price" value={formData.price} onChange={handleInputChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Category</label>
-              <select name="category" value={formData.category} onChange={handleInputChange} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500">
-                {Object.values(Category).map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Image URL</label>
-              <input name="imageUrl" value={formData.imageUrl} onChange={handleInputChange} placeholder="https://..." className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500" />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Features Manager */}
-            <div className="bg-slate-50 p-4 rounded-xl">
-              <label className="block text-sm font-medium text-slate-700 mb-2">Features</label>
-              <div className="flex gap-2 mb-3">
-                <input 
-                  value={featureInput} 
-                  onChange={(e) => setFeatureInput(e.target.value)} 
-                  placeholder="Add a feature..." 
-                  className="flex-1 px-3 py-2 border rounded-lg text-sm"
-                />
-                <button type="button" onClick={handleAddFeature} className="bg-indigo-600 text-white p-2 rounded-lg hover:bg-indigo-700"><Plus className="w-4 h-4" /></button>
-              </div>
-              <ul className="space-y-1">
-                {formData.features?.map((f, i) => (
-                  <li key={i} className="text-sm bg-white px-2 py-1 rounded border flex justify-between items-center">
-                    {f}
-                    <button type="button" onClick={() => setFormData(prev => ({...prev, features: prev.features?.filter((_, idx) => idx !== i)}))} className="text-red-500"><X className="w-3 h-3" /></button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Specs Manager */}
-            <div className="bg-slate-50 p-4 rounded-xl">
-              <label className="block text-sm font-medium text-slate-700 mb-2">Specifications</label>
-              <div className="flex gap-2 mb-3">
-                <input value={specKey} onChange={(e) => setSpecKey(e.target.value)} placeholder="Key (e.g. Weight)" className="flex-1 px-3 py-2 border rounded-lg text-sm" />
-                <input value={specValue} onChange={(e) => setSpecValue(e.target.value)} placeholder="Value (e.g. 50g)" className="flex-1 px-3 py-2 border rounded-lg text-sm" />
-                <button type="button" onClick={handleAddSpec} className="bg-indigo-600 text-white p-2 rounded-lg hover:bg-indigo-700"><Plus className="w-4 h-4" /></button>
-              </div>
-              <div className="space-y-1">
-                {Object.entries(formData.specs || {}).map(([k, v]) => (
-                  <div key={k} className="text-sm bg-white px-2 py-1 rounded border flex justify-between items-center">
-                    <span><b>{k}:</b> {v}</span>
-                    <button type="button" onClick={() => {
-                        const newSpecs = {...formData.specs};
-                        delete newSpecs[k];
-                        setFormData(prev => ({...prev, specs: newSpecs}));
-                    }} className="text-red-500"><X className="w-3 h-3" /></button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div className="pt-4 border-t border-slate-200">
-            <button type="submit" className="w-full bg-slate-900 text-white py-3 rounded-lg font-bold hover:bg-slate-800 transition-colors shadow-lg">
-              Add Product to Catalogue
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-};
-
 const Footer = () => {
-  const { navigate } = useNavigation();
   return (
     <footer className="bg-slate-900 text-slate-300 py-12 mt-auto">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
         <div>
           <div className="flex items-center text-white mb-4">
              <Cpu className="w-5 h-5 fill-current mr-2" />
@@ -772,37 +517,18 @@ const Footer = () => {
             <li>Contact OEM Sales</li>
           </ul>
         </div>
-        <div>
-          <h4 className="text-white font-semibold mb-4">Internal</h4>
-          <div className="flex flex-col gap-2 items-start">
-            <p className="text-xs text-slate-500">Employee access only.</p>
-            <button 
-              onClick={() => navigate({ type: 'ADMIN_LOGIN' })}
-              className="text-slate-400 hover:text-white text-sm flex items-center gap-1 transition-colors"
-            >
-              <Lock className="w-3 h-3" /> Admin Login
-            </button>
-          </div>
-        </div>
       </div>
     </footer>
   );
 };
 
 export default function App() {
-  // Products now initialized directly from constants (code only)
-  // No local storage persistence for new items as requested
-  const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
+  const [products] = useState<Product[]>(INITIAL_PRODUCTS);
 
-  const [isAdmin, setIsAdmin] = useState(false);
   const [currentView, setCurrentView] = useState<ViewState>({ type: 'HOME' });
 
   const navigate = (view: ViewState) => {
     setCurrentView(view);
-  };
-
-  const handleAddProduct = (newProduct: Product) => {
-    setProducts(prev => [...prev, newProduct]);
   };
 
   let content;
@@ -816,12 +542,6 @@ export default function App() {
     case 'PRODUCT_DETAIL':
       content = <ProductDetailView products={products} />;
       break;
-    case 'ADMIN_LOGIN':
-      content = <AdminLoginView onLoginSuccess={() => setIsAdmin(true)} />;
-      break;
-    case 'ADMIN_DASHBOARD':
-      content = <AdminDashboardView onAddProduct={handleAddProduct} isAdmin={isAdmin} />;
-      break;
     default:
       content = <HomeView products={products} />;
   }
@@ -830,7 +550,7 @@ export default function App() {
     <NavigationContext.Provider value={{ currentView, navigate }}>
       <div className="min-h-screen bg-white flex flex-col font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-900">
         <ScrollToTop />
-        <Navbar isAdmin={isAdmin} />
+        <Navbar />
         
         <main className="flex-grow">
           {content}
