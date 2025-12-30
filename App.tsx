@@ -260,6 +260,12 @@ const CatalogView = ({ products }: { products: Product[] }) => {
   const [selectedCategory, setSelectedCategory] = useState<Category | 'All'>('All');
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Helper to count items per category
+  const getCount = (cat: Category | 'All') => {
+    if (cat === 'All') return products.length;
+    return products.filter(p => p.category === cat).length;
+  };
+
   const filteredProducts = products.filter(p => {
     const matchesCategory = selectedCategory === 'All' || p.category === selectedCategory;
     const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -291,25 +297,28 @@ const CatalogView = ({ products }: { products: Product[] }) => {
 
       {/* Filters */}
       <div className="flex flex-wrap gap-2 mb-10">
-        <button
-          onClick={() => setSelectedCategory('All')}
-          className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-            selectedCategory === 'All' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-          }`}
-        >
-          All
-        </button>
-        {Object.values(Category).map(cat => (
-          <button
-            key={cat}
-            onClick={() => setSelectedCategory(cat)}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-              selectedCategory === cat ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-            }`}
-          >
-            {cat}
-          </button>
-        ))}
+        {['All', ...Object.values(Category)].map((cat) => {
+          const isSelected = selectedCategory === cat;
+          const count = getCount(cat as Category | 'All');
+          return (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat as Category | 'All')}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border flex items-center ${
+                isSelected 
+                  ? 'bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-200' 
+                  : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-300 hover:bg-indigo-50'
+              }`}
+            >
+              {cat}
+              <span className={`ml-2 text-xs py-0.5 px-2 rounded-full font-semibold ${
+                isSelected ? 'bg-indigo-500 text-white' : 'bg-slate-100 text-slate-500'
+              }`}>
+                {count}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Grid */}
@@ -320,8 +329,16 @@ const CatalogView = ({ products }: { products: Product[] }) => {
           ))}
         </div>
       ) : (
-        <div className="text-center py-20 text-slate-500">
-          <p>No products found matching your criteria.</p>
+        <div className="text-center py-20 bg-slate-50 rounded-2xl border border-dashed border-slate-300">
+           <Search className="w-12 h-12 text-slate-300 mx-auto mb-4" />
+           <h3 className="text-lg font-medium text-slate-900">No products found</h3>
+           <p className="text-slate-500 mb-6">Try adjusting your search or filters.</p>
+           <button 
+             onClick={() => {setSelectedCategory('All'); setSearchQuery('');}}
+             className="px-4 py-2 bg-indigo-100 text-indigo-700 rounded-lg font-medium hover:bg-indigo-200 transition-colors"
+           >
+             Clear all filters
+           </button>
         </div>
       )}
     </div>
@@ -868,23 +885,28 @@ const Footer = () => {
 };
 
 export default function App() {
-  const [products, setProducts] = useState<Product[]>(() => {
+  // Use separate state for custom added products.
+  // This allows INITIAL_PRODUCTS (from code) to update independently of user additions.
+  const [customProducts, setCustomProducts] = useState<Product[]>(() => {
     try {
-      const savedProducts = localStorage.getItem('suraj_products');
-      return savedProducts ? JSON.parse(savedProducts) : INITIAL_PRODUCTS;
+      const savedProducts = localStorage.getItem('suraj_custom_products');
+      return savedProducts ? JSON.parse(savedProducts) : [];
     } catch (e) {
-      console.error("Failed to load products from local storage", e);
-      return INITIAL_PRODUCTS;
+      console.error("Failed to load custom products from local storage", e);
+      return [];
     }
   });
 
   useEffect(() => {
     try {
-      localStorage.setItem('suraj_products', JSON.stringify(products));
+      localStorage.setItem('suraj_custom_products', JSON.stringify(customProducts));
     } catch (e) {
-      console.error("Failed to save products to local storage", e);
+      console.error("Failed to save custom products to local storage", e);
     }
-  }, [products]);
+  }, [customProducts]);
+
+  // Merge static catalogue from code with dynamic custom products
+  const products = [...INITIAL_PRODUCTS, ...customProducts];
 
   const [isAdmin, setIsAdmin] = useState(false);
   const [currentView, setCurrentView] = useState<ViewState>({ type: 'HOME' });
@@ -894,7 +916,7 @@ export default function App() {
   };
 
   const handleAddProduct = (newProduct: Product) => {
-    setProducts([...products, newProduct]);
+    setCustomProducts(prev => [...prev, newProduct]);
   };
 
   let content;
