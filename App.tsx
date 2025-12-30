@@ -321,6 +321,10 @@ const ProductDetailView = ({ products }: { products: Product[] }) => {
   const [activeImage, setActiveImage] = useState('');
   const [quantity, setQuantity] = useState(1);
 
+  // Zoom state
+  const [isZoomed, setIsZoomed] = useState(false);
+  const [zoomPosition, setZoomPosition] = useState({ x: 50, y: 50 });
+
   // Memoize gallery images to prevent recreation on every render
   const galleryImages = useMemo(() => {
     if (!product) return [];
@@ -341,7 +345,7 @@ const ProductDetailView = ({ products }: { products: Product[] }) => {
 
   // Auto-slide effect
   useEffect(() => {
-    if (galleryImages.length <= 1) return;
+    if (galleryImages.length <= 1 || isZoomed) return; // Pause auto-slide if zoomed
 
     const intervalId = setInterval(() => {
       setActiveImage(current => {
@@ -352,7 +356,14 @@ const ProductDetailView = ({ products }: { products: Product[] }) => {
     }, 4000); // Change image every 4 seconds
 
     return () => clearInterval(intervalId);
-  }, [galleryImages, activeImage]); // activeImage dependency ensures timer resets on manual interaction
+  }, [galleryImages, activeImage, isZoomed]); // activeImage dependency ensures timer resets on manual interaction
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - left) / width) * 100;
+    const y = ((e.clientY - top) / height) * 100;
+    setZoomPosition({ x, y });
+  };
 
   if (!product) {
     return (
@@ -383,14 +394,24 @@ const ProductDetailView = ({ products }: { products: Product[] }) => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           {/* Left: Gallery */}
           <div className="space-y-4">
-            <div className="aspect-[4/3] rounded-3xl overflow-hidden bg-slate-100 border border-slate-200 shadow-sm relative group">
+            <div 
+              className="aspect-[4/3] rounded-3xl overflow-hidden bg-slate-100 border border-slate-200 shadow-sm relative group cursor-crosshair"
+              onMouseEnter={() => setIsZoomed(true)}
+              onMouseLeave={() => setIsZoomed(false)}
+              onMouseMove={handleMouseMove}
+            >
               <img 
                 src={activeImage || product.imageUrl} 
                 alt={product.name} 
-                className="w-full h-full object-cover transition-all duration-500 ease-in-out" 
+                className={`w-full h-full object-cover transition-transform duration-500 ease-in-out ${isZoomed ? 'scale-150' : 'scale-100'}`}
+                style={{
+                  transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`
+                }}
               />
               {/* Progress bar for auto-slide visualization (optional but nice touch) */}
-              <div className="absolute bottom-0 left-0 h-1 bg-indigo-600/50 w-full animate-[loading_4s_linear_infinite]" key={activeImage}></div>
+              {!isZoomed && (
+                <div className="absolute bottom-0 left-0 h-1 bg-indigo-600/50 w-full animate-[loading_4s_linear_infinite]" key={activeImage}></div>
+              )}
             </div>
             {galleryImages.length > 1 && (
               <div className="grid grid-cols-3 gap-4">
