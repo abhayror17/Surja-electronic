@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext, createContext, useMemo } from 'react';
 import { 
-  Menu, X, Layers, ArrowRight, Star, Search, Cpu, Plus, Minus
+  Menu, X, Layers, ArrowRight, Star, Search, Cpu, Plus, Minus,
+  Mail, Phone, MapPin, Send, MessageSquare
 } from 'lucide-react';
 import { Category, Product, ViewState } from './types';
 import { INITIAL_PRODUCTS } from './constants';
@@ -71,8 +72,15 @@ const Navbar = () => {
                 {item.label}
               </button>
             ))}
-            <button className="bg-slate-900 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-slate-800 transition-colors">
-              Contact OEM Sales
+            <button 
+              onClick={() => navigate({ type: 'CONTACT' })}
+              className={`text-sm font-medium transition-colors ${
+                  isActive({ type: 'CONTACT' })
+                    ? 'text-indigo-600'
+                    : 'bg-slate-900 text-white px-4 py-2 rounded-full hover:bg-slate-800'
+                }`}
+            >
+              {isActive({ type: 'CONTACT' }) ? 'Contact Us' : 'Contact OEM Sales'}
             </button>
           </div>
 
@@ -105,6 +113,19 @@ const Navbar = () => {
                 {item.label}
               </button>
             ))}
+            <button
+                onClick={() => {
+                  navigate({ type: 'CONTACT' });
+                  setMobileMenuOpen(false);
+                }}
+                className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium ${
+                   isActive({ type: 'CONTACT' })
+                    ? 'bg-indigo-50 text-indigo-600' 
+                    : 'text-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                Contact OEM Sales
+            </button>
           </div>
         </div>
       )}
@@ -168,6 +189,12 @@ const HomeView = ({ products }: { products: Product[] }) => {
               className="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full font-semibold transition-all transform hover:scale-105 shadow-lg shadow-indigo-500/30 flex items-center justify-center"
             >
               Browse Catalogue
+            </button>
+            <button 
+              onClick={() => navigate({ type: 'CONTACT' })}
+              className="px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 text-white rounded-full font-semibold transition-all flex items-center justify-center"
+            >
+              Contact Sales
             </button>
           </div>
         </div>
@@ -490,7 +517,188 @@ const ProductDetailView = ({ products }: { products: Product[] }) => {
   );
 };
 
+const ContactView = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    company: '',
+    email: '',
+    interest: 'OEM Manufacturing',
+    message: ''
+  });
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Simulate form submission
+    setSubmitted(true);
+    setTimeout(() => {
+        setSubmitted(false);
+        setFormData({ name: '', company: '', email: '', interest: 'OEM Manufacturing', message: '' });
+        alert("Thank you for your inquiry. Our sales team will contact you within 24 hours.");
+    }, 1000);
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-50 pb-20">
+      {/* Header */}
+      <div className="bg-slate-900 text-white py-16 px-4">
+        <div className="max-w-7xl mx-auto text-center">
+          <h1 className="text-4xl font-bold mb-4">Contact Our Sales Team</h1>
+          <p className="text-xl text-slate-300 max-w-2xl mx-auto">
+            Ready to scale your production? Reach out to our OEM/ODM specialists for quotes, technical consultation, and partnership opportunities.
+          </p>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Contact Info Card */}
+          <div className="bg-white rounded-2xl shadow-xl p-8 lg:col-span-1 h-fit">
+            <h3 className="text-xl font-bold text-slate-900 mb-6">Get in Touch</h3>
+            
+            <div className="space-y-6">
+              <div className="flex items-start">
+                <div className="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center shrink-0 text-indigo-600">
+                  <MapPin className="w-5 h-5" />
+                </div>
+                <div className="ml-4">
+                  <p className="font-medium text-slate-900">Headquarters & Factory</p>
+                  <p className="text-slate-500 text-sm mt-1">
+                    Plot No. 42, Electronics City Phase 1,<br/>
+                    Bengaluru, Karnataka 560100<br/>
+                    India
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start">
+                <div className="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center shrink-0 text-indigo-600">
+                  <Phone className="w-5 h-5" />
+                </div>
+                <div className="ml-4">
+                  <p className="font-medium text-slate-900">Phone</p>
+                  <p className="text-slate-500 text-sm mt-1">+91 80 1234 5678</p>
+                  <p className="text-slate-400 text-xs mt-1">Mon-Fri, 9am - 6pm IST</p>
+                </div>
+              </div>
+
+              <div className="flex items-start">
+                <div className="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center shrink-0 text-indigo-600">
+                  <Mail className="w-5 h-5" />
+                </div>
+                <div className="ml-4">
+                  <p className="font-medium text-slate-900">Email</p>
+                  <p className="text-slate-500 text-sm mt-1">sales@surajelectra.com</p>
+                  <p className="text-slate-500 text-sm">support@surajelectra.com</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 pt-8 border-t border-slate-100">
+              <h4 className="font-medium text-slate-900 mb-2">Global Certifications</h4>
+              <div className="flex gap-2 text-xs text-slate-500 flex-wrap">
+                <span className="bg-slate-100 px-2 py-1 rounded">ISO 9001</span>
+                <span className="bg-slate-100 px-2 py-1 rounded">RoHS</span>
+                <span className="bg-slate-100 px-2 py-1 rounded">CE</span>
+                <span className="bg-slate-100 px-2 py-1 rounded">UL</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Contact Form */}
+          <div className="bg-white rounded-2xl shadow-xl p-8 lg:col-span-2">
+            <h3 className="text-2xl font-bold text-slate-900 mb-6">Send us a Message</h3>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
+                  <input
+                    type="text"
+                    id="name"
+                    required
+                    className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none"
+                    placeholder="John Doe"
+                    value={formData.name}
+                    onChange={e => setFormData({...formData, name: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="company" className="block text-sm font-medium text-slate-700 mb-1">Company Name</label>
+                  <input
+                    type="text"
+                    id="company"
+                    required
+                    className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none"
+                    placeholder="Tech Solutions Ltd."
+                    value={formData.company}
+                    onChange={e => setFormData({...formData, company: e.target.value})}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1">Business Email</label>
+                  <input
+                    type="email"
+                    id="email"
+                    required
+                    className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none"
+                    placeholder="john@company.com"
+                    value={formData.email}
+                    onChange={e => setFormData({...formData, email: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="interest" className="block text-sm font-medium text-slate-700 mb-1">Area of Interest</label>
+                  <select
+                    id="interest"
+                    className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none bg-white"
+                    value={formData.interest}
+                    onChange={e => setFormData({...formData, interest: e.target.value})}
+                  >
+                    <option>OEM Manufacturing</option>
+                    <option>ODM Design Services</option>
+                    <option>PCB Assembly</option>
+                    <option>Component Sourcing</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="message" className="block text-sm font-medium text-slate-700 mb-1">Project Details / Message</label>
+                <textarea
+                  id="message"
+                  rows={4}
+                  required
+                  className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none"
+                  placeholder="Tell us about your project requirements, estimated volumes, etc."
+                  value={formData.message}
+                  onChange={e => setFormData({...formData, message: e.target.value})}
+                ></textarea>
+              </div>
+
+              <div className="flex justify-end">
+                <button
+                  type="submit"
+                  disabled={submitted}
+                  className="bg-indigo-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-all flex items-center shadow-lg shadow-indigo-500/30 disabled:opacity-70"
+                >
+                  {submitted ? 'Sending...' : 'Send Message'}
+                  {!submitted && <Send className="w-4 h-4 ml-2" />}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const Footer = () => {
+  const { navigate } = useNavigation();
   return (
     <footer className="bg-slate-900 text-slate-300 py-12 mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -518,7 +726,7 @@ const Footer = () => {
             <li>About Suraj</li>
             <li>Quality Control</li>
             <li>Certifications</li>
-            <li>Contact OEM Sales</li>
+            <li><button onClick={() => navigate({ type: 'CONTACT' })} className="hover:text-white transition-colors">Contact OEM Sales</button></li>
           </ul>
         </div>
       </div>
@@ -545,6 +753,9 @@ export default function App() {
       break;
     case 'PRODUCT_DETAIL':
       content = <ProductDetailView products={products} />;
+      break;
+    case 'CONTACT':
+      content = <ContactView />;
       break;
     default:
       content = <HomeView products={products} />;

@@ -21,7 +21,8 @@ export interface Product {
 export type ViewState = 
   | { type: 'HOME' }
   | { type: 'CATALOG'; category?: Category }
-  | { type: 'PRODUCT_DETAIL'; productId: string };
+  | { type: 'PRODUCT_DETAIL'; productId: string }
+  | { type: 'CONTACT' };
 
 export interface ChatMessage {
   role: 'user' | 'model';
